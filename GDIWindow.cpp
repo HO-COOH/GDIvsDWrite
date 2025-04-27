@@ -1,7 +1,7 @@
 #include "GDIWindow.h"
 #include <Windows.h>
 
-GDIWindow::GDIWindow(std::wstring& text) : BaseWindow{ L"GDI window" }, m_font{
+GDIWindow::GDIWindow(std::wstring& text) : m_font{
 	CreateFontW(
 		72,
 		0,
@@ -19,8 +19,10 @@ GDIWindow::GDIWindow(std::wstring& text) : BaseWindow{ L"GDI window" }, m_font{
 		TEXT("Microsoft YaHei")
 	) },
 	m_backgroundBrush{reinterpret_cast<HBRUSH>(GetStockObject(WHITE_BRUSH))},
-	m_text{text}
+	m_text{text},
+	BaseWindow{ L"GDI window" }
 {
+
 }
 
 void GDIWindow::OnPaint(HWND hwnd)

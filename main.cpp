@@ -2,6 +2,7 @@
 #include "GDIWindow.h"
 #include "DWriteWindow.h"
 #include <wil/result_macros.h>
+
 int main()
 {
 	THROW_IF_WIN32_BOOL_FALSE(SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2));

@@ -3,7 +3,7 @@
 #include <wil/resource.h>
 #include <string>
 
-class GDIWindow : public BaseWindow<GDIWindow>
+class GDIWindow : public BaseWindow<GDIWindow, L"GDIWindowClass">
 {
 	wil::unique_hfont m_font;
 	HBRUSH m_backgroundBrush;

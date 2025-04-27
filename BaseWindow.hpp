@@ -2,24 +2,33 @@
 #include <wil/resource.h>
 #include <string_view>
 
-template<typename T>
+template<size_t N>
+struct StringLiteral {
+	constexpr StringLiteral(const wchar_t(&str)[N]) {
+		std::copy_n(str, N, value);
+	}
+
+	wchar_t value[N];
+};
+
+template<typename T, StringLiteral className>
 class BaseWindow
 {
 	static void OnPaint(HWND) {}
-	constexpr static auto className = L"MyWindow";
 protected:
 	wil::unique_hwnd m_hwnd;
 
-	static auto getSelfFromHwnd(HWND const window)
+	[[nodiscard]] static auto getSelfFromHwnd(HWND const window)
 	{
 		return reinterpret_cast<T*>(GetWindowLongPtr(window, GWLP_USERDATA));
 	}
 
 	static void OnNCCreate(HWND hwnd, CREATESTRUCT* lparam)
 	{
-		auto self = reinterpret_cast<T*>(lparam->lpCreateParams);
-		self->m_hwnd.reset(hwnd);
-		SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(static_cast<T*>(self)));
+	}
+
+	static void OnSize(HWND hwnd, WPARAM wparam, UINT width, UINT height)
+	{
 	}
 
 	static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
@@ -35,6 +44,9 @@ protected:
 			case WM_PAINT:
 				T::OnPaint(hwnd);
 				return 0;
+			case WM_SIZE:
+				T::OnSize(hwnd, wparam, LOWORD(lparam), HIWORD(lparam));
+				return 0;
 			default:
 				break;
 		}
@@ -42,7 +54,7 @@ protected:
 	}
 
 public:
-	BaseWindow(std::wstring_view windowName)
+	BaseWindow(std::wstring_view windowName, DWORD exStyle = 0, DWORD style = WS_OVERLAPPEDWINDOW, int x = CW_USEDEFAULT, int y = CW_USEDEFAULT, int cx = CW_USEDEFAULT, int cy = CW_USEDEFAULT)
 	{
 		static auto windowClass = [] {
 			WNDCLASS wc
@@ -50,26 +62,36 @@ public:
 				.style = CS_HREDRAW | CS_VREDRAW,
 				.lpfnWndProc = WndProc,
 				.cbWndExtra = sizeof(void*),
-				.lpszClassName = className,
+				.lpszClassName = className.value,
 			};
 			RegisterClass(&wc);
 			return wc;
-			}();
+		}();
 
-		CreateWindowW(
-			className,
+		auto const hwnd = CreateWindowExW(
+			exStyle,
+			className.value,
 			windowName.data(),
-			WS_OVERLAPPEDWINDOW,
-			CW_USEDEFAULT,
-			CW_USEDEFAULT,
-			CW_USEDEFAULT,
-			CW_USEDEFAULT,
+			style,
+			x,
+			y,
+			cx,
+			cy,
 			nullptr,
 			nullptr,
 			nullptr,
-			this
+			static_cast<T*>(this)
 		);
+		SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(static_cast<T*>(this)));
 
-		ShowWindow(m_hwnd.get(), SW_SHOW);
+		ShowWindow(hwnd, SW_SHOW);
+		m_hwnd.reset(hwnd);
+	}
+
+	RECT ClientRect() const
+	{
+		RECT clientRect;
+		THROW_IF_WIN32_BOOL_FALSE(GetClientRect(m_hwnd.get(), &clientRect));
+		return clientRect;
 	}
 };
