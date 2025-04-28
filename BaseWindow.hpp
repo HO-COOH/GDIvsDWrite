@@ -31,16 +31,26 @@ protected:
 	{
 	}
 
+	static void OnDpiChanged(HWND, WORD dpiX, WORD dpiY, RECT* suggestPosition)
+	{
+	}
+
 	static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 	{
 		switch (msg)
 		{
+			//Methods that have default (no-op) implementation
+			case WM_DPICHANGED:
+				OnDpiChanged(hwnd, LOWORD(wparam), HIWORD(wparam), reinterpret_cast<RECT*>(lparam));
+				break;
 			case WM_NCCREATE: 
 				OnNCCreate(hwnd, reinterpret_cast<CREATESTRUCT*>(lparam));
 				break;
 			case WM_DESTROY:
 				PostQuitMessage(0);
 				return 0;
+			
+			//Methods that must be implemented by derived class 
 			case WM_PAINT:
 				T::OnPaint(hwnd);
 				return 0;
@@ -93,5 +103,10 @@ public:
 		RECT clientRect;
 		THROW_IF_WIN32_BOOL_FALSE(GetClientRect(m_hwnd.get(), &clientRect));
 		return clientRect;
+	}
+
+	UINT GetDpi() const
+	{
+		return GetDpiForWindow(m_hwnd.get());
 	}
 };

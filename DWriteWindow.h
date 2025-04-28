@@ -7,6 +7,7 @@
 
 struct ID2D1HwndRenderTarget;
 
+//Draw text using DirectWrite
 class DWriteWindow : public BaseWindow<DWriteWindow, L"DWriteWindowClass">
 {
 	std::wstring& m_text;

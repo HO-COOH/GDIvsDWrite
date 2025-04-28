@@ -3,7 +3,7 @@
 
 GDIWindow::GDIWindow(std::wstring& text) : m_font{
 	CreateFontW(
-		72,
+		72 * GetDpi() / 96.0,
 		0,
 		0,
 		0,
@@ -39,4 +39,25 @@ void GDIWindow::OnPaint(HWND hwnd)
 
 	SelectObject(hdc, oldFont);
 	EndPaint(hwnd, &ps);
+}
+
+void GDIWindow::OnDpiChanged(HWND hwnd, WORD dpiX, WORD dpiY, RECT* suggestPosition)
+{
+	getSelfFromHwnd(hwnd)->m_font.reset(
+		CreateFontW(
+		72 * dpiX / 96.0,
+		0,
+		0,
+		0,
+		FW_REGULAR,
+		false,
+		false,
+		false,
+		DEFAULT_CHARSET,
+		OUT_OUTLINE_PRECIS,
+		CLIP_DEFAULT_PRECIS,
+		CLEARTYPE_QUALITY,
+		VARIABLE_PITCH,
+		TEXT("Microsoft YaHei")
+	));
 }
