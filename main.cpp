@@ -1,6 +1,7 @@
 #include <Windows.h>
 #include "GDIWindow.h"
 #include "DWriteWindow.h"
+#include "UWPWindow.h"
 #include <wil/result_macros.h>
 
 int main()
@@ -11,6 +12,7 @@ int main()
 
 	GDIWindow gdiWindow{ text };
 	DWriteWindow dwriteWindow{ text };
+	UWPWindow uwpWindow{ text };
 
 	MSG msg = { };
 	while (GetMessage(&msg, NULL, 0, 0) > 0)
