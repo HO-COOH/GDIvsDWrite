@@ -57,9 +57,6 @@ protected:
 			case WM_SIZE:
 				T::OnSize(hwnd, wparam, LOWORD(lparam), HIWORD(lparam));
 				return 0;
-			case WM_THEMECHANGED:
-				OutputDebugString(L"Theme changed\n");
-				break;
 			default:
 				break;
 		}
