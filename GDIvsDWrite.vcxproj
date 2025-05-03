@@ -142,13 +142,18 @@
     <ClInclude Include="BaseWindow.hpp" />
     <ClInclude Include="DWriteWindow.h" />
     <ClInclude Include="GDIWindow.h" />
+    <ClInclude Include="IslandWindow.h" />
+    <ClInclude Include="ITextDisplay.h" />
+    <ClInclude Include="SettingsWindow.h" />
     <ClInclude Include="UWPWindow.h" />
     <ClInclude Include="WinUI3Window.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DWriteWindow.cpp" />
+    <ClCompile Include="IslandWindow.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="GDIWindow.cpp" />
+    <ClCompile Include="SettingsWindow.cpp" />
     <ClCompile Include="UWPWindow.cpp" />
     <ClCompile Include="WinUI3Window.cpp" />
   </ItemGroup>

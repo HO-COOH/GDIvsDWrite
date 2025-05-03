@@ -4,6 +4,7 @@
 #include "UWPWindow.h"
 #include <wil/result_macros.h>
 #include "WinUI3Window.h"
+#include "SettingsWindow.h"
 
 int main()
 {
@@ -15,9 +16,12 @@ int main()
 
 	//WinUI3 window must be created before UWP window
 	WinUI3Window winui3Window{ text };
+	SettingsWindow settings;
 	GDIWindow gdiWindow{ text };
 	DWriteWindow dwriteWindow{ text };
 	UWPWindow uwpWindow{ text };
+
+	settings << gdiWindow;
 
 	MSG msg = { };
 	while (GetMessage(&msg, NULL, 0, 0) > 0)
