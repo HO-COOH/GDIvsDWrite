@@ -1,13 +1,17 @@
 #pragma once
-#include <string>
+#include "ITextDisplay.h"
 #include "IslandWindow.h"
+#include <winrt/Windows.UI.Xaml.Controls.h>
 
-class UWPWindow : public IslandWindow
+class UWPWindow : public IslandWindow, public ITextDisplay
 {
-	std::wstring& m_text;
-	wil::unique_hwnd islandHwmd;
-
+	winrt::Windows::UI::Xaml::Controls::TextBlock textBlock{ nullptr };
 public:
-	UWPWindow(std::wstring& text);
+	UWPWindow(winrt::hstring const& text);
+
+	// Inherited via ITextDisplay
+	void SetText(winrt::hstring const& text) override;
+	void SetFontSize(int fontSize) override;
+	void SetFontFamily(winrt::hstring const& fontFamily) override;
 };
 

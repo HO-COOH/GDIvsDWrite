@@ -22,7 +22,7 @@ void GDIWindow::recreateFont()
 	));
 }
 
-GDIWindow::GDIWindow(std::wstring& text) :
+GDIWindow::GDIWindow(winrt::hstring const& text) :
 	m_backgroundBrush{reinterpret_cast<HBRUSH>(GetStockObject(WHITE_BRUSH))},
 	m_text{text},
 	BaseWindow{ L"GDI window" }
@@ -40,7 +40,7 @@ void GDIWindow::OnPaint(HWND hwnd)
 
 	SetTextColor(hdc, RGB(0, 0, 0));
 	FillRect(hdc, &ps.rcPaint, self->m_backgroundBrush);
-	DrawText(hdc, self->m_text.data(), -1, &ps.rcPaint, DT_CENTER | DT_VCENTER | DT_WORDBREAK);
+	DrawText(hdc, self->m_text.data(), -1, &ps.rcPaint, DT_LEFT | DT_WORDBREAK);
 
 	SelectObject(hdc, oldFont);
 	EndPaint(hwnd, &ps);
@@ -76,7 +76,7 @@ void GDIWindow::SetText(winrt::hstring const& text)
 
 void GDIWindow::SetFontSize(int fontSize)
 {
-	m_fontSize = fontSize;
+	m_fontSize = fontSize * 1.5;
 	recreateFont();
 	InvalidateRect(m_hwnd.get(), nullptr, true);
 }

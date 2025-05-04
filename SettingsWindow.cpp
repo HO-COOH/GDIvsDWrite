@@ -69,7 +69,8 @@ SettingsWindow::SettingsWindow()
 			.GridUnitType = winrt::Windows::UI::Xaml::GridUnitType::Auto 
 		});
 		rows[1].Height(winrt::Windows::UI::Xaml::GridLength{
-			.GridUnitType = winrt::Windows::UI::Xaml::GridUnitType::Auto 
+			.Value = 1.0,
+			.GridUnitType = winrt::Windows::UI::Xaml::GridUnitType::Star 
 		});
 
 		rootGrid.RowDefinitions().ReplaceAll(rows);
@@ -112,18 +113,22 @@ SettingsWindow::SettingsWindow()
 			winrt::box_value(28),
 			winrt::box_value(36),
 			winrt::box_value(48),
+			winrt::box_value(56),
 			winrt::box_value(72)
 		});
-		fontSizeComboBox.SelectedIndex(4);
+		fontSizeComboBox.SelectedIndex(13);
 		fontSizeComboBox.SelectionChanged({ this, &SettingsWindow::fontSizeChanged });
 	}
 
 	winrt::Windows::UI::Xaml::Controls::TextBox inputText;
 	{
-		inputText.Header(winrt::box_value(L"Test:"));
+		inputText.Header(winrt::box_value(L"Input here to test font:"));
+		inputText.Text(L"微软雅黑");
 		winrt::Windows::UI::Xaml::Controls::Grid::SetRow(inputText, 1);
 		winrt::Windows::UI::Xaml::Controls::Grid::SetColumnSpan(inputText, 2);
 		inputText.TextChanged({ this, &SettingsWindow::textChanged });
+		inputText.AcceptsReturn(true);
+		inputText.TextWrapping(winrt::Windows::UI::Xaml::TextWrapping::Wrap);
 	}
 
 	rootGrid.Children().ReplaceAll({ fontFamilyComboBox, fontSizeComboBox, inputText });

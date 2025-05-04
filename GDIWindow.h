@@ -12,11 +12,11 @@ class GDIWindow : public BaseWindow<GDIWindow, L"GDIWindowClass">, public ITextD
 	winrt::hstring m_fontFamily{ TEXT("Microsoft YaHei") };
 	wil::unique_hfont m_font;
 	HBRUSH m_backgroundBrush;
-	std::wstring m_text;
+	winrt::hstring m_text;
 
 	void recreateFont();
 public:
-	GDIWindow(std::wstring& text);
+	GDIWindow(winrt::hstring const& text);
 
 	static void OnPaint(HWND hwnd);
 	static void OnDpiChanged(HWND hwnd, WORD dpiX, WORD dpiY, RECT* suggestPosition);

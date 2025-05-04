@@ -109,4 +109,12 @@ public:
 	{
 		return GetDpiForWindow(m_hwnd.get());
 	}
+
+	auto SetPosition(int x, int y, int cx, int cy, UINT flags) const
+	{
+		auto const result = SetWindowPos(m_hwnd.get(), HWND_TOP, x, y, cx, cy, flags);
+		InvalidateRect(m_hwnd.get(), nullptr, true);
+		UpdateWindow(m_hwnd.get());
+		return result;
+	}
 };

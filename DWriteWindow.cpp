@@ -7,23 +7,27 @@
 wil::com_ptr<ID2D1Factory> d2dFactory;
 wil::com_ptr<IDWriteFactory> dwriteFactory;
 
-DWriteWindow::DWriteWindow(std::wstring& text) : m_text{text}, BaseWindow{ L"DWrite window" }
+void DWriteWindow::recreateFont()
 {
-	THROW_IF_FAILED(D2D1CreateFactory(D2D1_FACTORY_TYPE::D2D1_FACTORY_TYPE_SINGLE_THREADED, d2dFactory.put()));
-	THROW_IF_FAILED(DWriteCreateFactory(DWRITE_FACTORY_TYPE::DWRITE_FACTORY_TYPE_ISOLATED, __uuidof(IDWriteFactory), dwriteFactory.put_unknown()));
-
-
 	THROW_IF_FAILED(dwriteFactory->CreateTextFormat(
-		TEXT("Microsoft YaHei"),
+		m_fontFamily.data(),
 		nullptr,
 		DWRITE_FONT_WEIGHT::DWRITE_FONT_WEIGHT_NORMAL,
 		DWRITE_FONT_STYLE::DWRITE_FONT_STYLE_NORMAL,
 		DWRITE_FONT_STRETCH::DWRITE_FONT_STRETCH_NORMAL,
-		56.f,
+		m_fontSize,
 		L"",
 		textFormat.put()
 	));
-	THROW_IF_FAILED(textFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT::DWRITE_TEXT_ALIGNMENT_CENTER));
+	THROW_IF_FAILED(textFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT::DWRITE_TEXT_ALIGNMENT_LEADING));
+}
+
+DWriteWindow::DWriteWindow(winrt::hstring const& text) : m_text{text}, BaseWindow{ L"DWrite window" }
+{
+	THROW_IF_FAILED(D2D1CreateFactory(D2D1_FACTORY_TYPE::D2D1_FACTORY_TYPE_SINGLE_THREADED, d2dFactory.put()));
+	THROW_IF_FAILED(DWriteCreateFactory(DWRITE_FACTORY_TYPE::DWRITE_FACTORY_TYPE_ISOLATED, __uuidof(IDWriteFactory), dwriteFactory.put_unknown()));
+
+	recreateFont();
 
 	auto const clientRect = ClientRect();
 	THROW_IF_FAILED(d2dFactory->CreateHwndRenderTarget(
@@ -40,6 +44,26 @@ void DWriteWindow::OnSize(HWND hwnd, WPARAM wparam, UINT width, UINT height)
 	{
 		THROW_IF_FAILED(renderTarget->Resize(D2D1::SizeU(width, height)));
 	}
+}
+
+void DWriteWindow::SetText(winrt::hstring const& text)
+{
+	m_text = text;
+	OnPaint(m_hwnd.get());
+}
+
+void DWriteWindow::SetFontSize(int fontSize)
+{
+	m_fontSize = fontSize;
+	recreateFont();
+	OnPaint(m_hwnd.get());
+}
+
+void DWriteWindow::SetFontFamily(winrt::hstring const& fontFamily)
+{
+	m_fontFamily = fontFamily;
+	recreateFont();
+	OnPaint(m_hwnd.get());
 }
 
 void DWriteWindow::OnPaint(HWND hwnd)
