@@ -22,5 +22,5 @@ void UWPWindow::SetFontSize(int fontSize)
 
 void UWPWindow::SetFontFamily(winrt::hstring const& fontFamily)
 {
-
+	textBlock.FontFamily(winrt::Windows::UI::Xaml::Media::FontFamily{ fontFamily });
 }
